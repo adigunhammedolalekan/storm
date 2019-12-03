@@ -1,8 +1,11 @@
 package storm
 
 import (
+	"encoding/base64"
 	"encoding/json"
+	"github.com/google/uuid"
 	"io/ioutil"
+	"os"
 )
 
 type Config struct {
@@ -10,7 +13,7 @@ type Config struct {
 		Url string `json:"url"`
 		Username string `json:"username"`
 		Password string `json:"password"`
-	}
+	} `json:"registry"`
 	ServerAuthToken string `json:"server_auth_token"`
 }
 
@@ -33,6 +36,19 @@ func defaultConfig() *Config {
 			Username string `json:"username"`
 			Password string `json:"password"`
 		}{Url: "localhost:5000", Username: "username", Password: "password"},
-		ServerAuthToken: "",
+		ServerAuthToken: base64.StdEncoding.EncodeToString([]byte(uuid.New().String())),
 	}
+}
+
+func createDefaultConfig(path string) error {
+	cfg := defaultConfig()
+	data, err := json.MarshalIndent(cfg, "", "\t")
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(path, data, os.ModePerm)
+}
+
+func InitDefaultConfig(path string) error {
+	return createDefaultConfig(path)
 }

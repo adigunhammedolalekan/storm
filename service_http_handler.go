@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 )
 
@@ -25,19 +24,16 @@ func (handler *serviceHttpHandler) deploymentHandler(w http.ResponseWriter, r *h
 	}
 	appBuildFolder := fmt.Sprintf("%s%s", appName, "Build")
 	if err != nil {
-		log.Println(err)
 		handler.badRequest(w, "bad request: bin is missing")
 		return
 	}
 	tag, err := handler.docker.BuildImage(context.Background(), appBuildFolder, appName, file)
 	if err != nil {
-		log.Println(err)
 		handler.respond(w, http.StatusInternalServerError, &Response{Error: true, Message: "failed to build docker image"})
 		return
 	}
 
 	if err := handler.docker.PushImage(context.Background(), tag); err != nil {
-		log.Println(err)
 		handler.respond(w, http.StatusInternalServerError, &Response{Error: true, Message: "failed to push image to local registry"})
 		return
 	}

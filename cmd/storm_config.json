@@ -1,8 +1,8 @@
 {
-  "registry": {
-    "url": "localhost:5000",
-    "username": "username",
-    "password": "password"
-  },
-  "server_auth_token": "token"
+	"registry": {
+		"url": "localhost:5000",
+		"username": "username",
+		"password": "password"
+	},
+	"server_auth_token": "NGFhMGMyNjAtMmI3OS00Zjc4LWI5MzItNDMzYTU0NmU3Yzkx"
 }
