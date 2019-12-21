@@ -12,5 +12,6 @@ services:
       REGISTRY_AUTH_HTPASSWD_PATH: /mnt/registry/auth/registry.password
       REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /mnt/registry/data
     volumes:
-      - /Users/adigun/mnt/storm/registry:/mnt/registry/data
-      - /Users/adigun/mnt/storm/registry/registry.auth:/mnt/registry/auth/registry.password
+      - /Users/adigun/mnt/storm/registry/data:/mnt/registry/data
+      - /Users/adigun/mnt/storm/registry/auth/registry.password:/mnt/registry/auth/registry.password
+      - /Users/adigun/mnt/storm/build:/mnt/build

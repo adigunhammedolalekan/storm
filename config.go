@@ -4,26 +4,22 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"github.com/google/uuid"
-	"io/ioutil"
+	"io"
 	"os"
 )
 
 type Config struct {
-	Registry struct{
-		Url string `json:"url"`
+	Registry struct {
+		Url      string `json:"url"`
 		Username string `json:"username"`
 		Password string `json:"password"`
 	} `json:"registry"`
 	ServerAuthToken string `json:"server_auth_token"`
 }
 
-func parseConfig(path string) (*Config, error) {
+func parseConfig(r io.Reader) (*Config, error) {
 	cfg := &Config{}
-	data, err := ioutil.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-	if err := json.Unmarshal(data, cfg); err != nil {
+	if err := json.NewDecoder(r).Decode(cfg); err != nil {
 		return nil, err
 	}
 	return cfg, nil
@@ -40,15 +36,23 @@ func defaultConfig() *Config {
 	}
 }
 
-func createDefaultConfig(path string) error {
+func createDefaultConfig(location *os.File) error {
 	cfg := defaultConfig()
 	data, err := json.MarshalIndent(cfg, "", "\t")
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(path, data, os.ModePerm)
+
+	if _, err := io.WriteString(location, string(data)); err != nil {
+		return err
+	}
+	return nil
 }
 
 func InitDefaultConfig(path string) error {
-	return createDefaultConfig(path)
+	f, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	return createDefaultConfig(f)
 }

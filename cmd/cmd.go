@@ -20,7 +20,7 @@ func main() {
 			if err := storm.InitDefaultConfig(configPath); err != nil {
 				log.Println(err)
 				os.Exit(1)
-			}else {
+			} else {
 				log.Printf("Created default config: %s", configPath)
 				os.Exit(0)
 			}
