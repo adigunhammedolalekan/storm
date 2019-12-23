@@ -13,6 +13,8 @@ import (
 
 const stormNs = "namespace-storm"
 const registrySecretName = "storm-secret"
+
+//go:generate mockgen -destination=mocks/k8s_service_mock.go -package=mocks github.com/adigunhammedolalekan/storm K8sService
 type K8sService interface {
 	DeployService(tag, name string, envs map[string]string, isLocal bool) error
 }
@@ -91,14 +93,14 @@ func (d *defaultK8sService) createService(serviceName string, serviceType v1.Ser
 	svc.Labels = labels
 	svc.Namespace = stormNs
 	port := v1.ServicePort{
-		Name:       fmt.Sprintf("%s-service-port", name),
-		Protocol:   "TCP",
-		Port: 7600,
+		Name:     fmt.Sprintf("%s-service-port", name),
+		Protocol: "TCP",
+		Port:     7600,
 	}
-	svc.Spec = v1.ServiceSpec {
-		Ports:                    []v1.ServicePort{port},
-		Selector:                 labels,
-		Type:                     serviceType,
+	svc.Spec = v1.ServiceSpec{
+		Ports:    []v1.ServicePort{port},
+		Selector: labels,
+		Type:     serviceType,
 	}
 	return client.Services(stormNs).Create(svc)
 }
@@ -113,8 +115,8 @@ func (d *defaultK8sService) createDeployment(tag, name string, envs, labels map[
 
 	for k, v := range envs {
 		envVars = append(envVars, v1.EnvVar{
-			Name:      k,
-			Value:     v,
+			Name:  k,
+			Value: v,
 		})
 	}
 	port := int32(8090)
@@ -141,9 +143,9 @@ func (d *defaultK8sService) createDeployment(tag, name string, envs, labels map[
 		ImagePullSecrets: []v1.LocalObjectReference{{Name: registrySecretName}},
 	}
 	deployment.Spec = appsV1.DeploymentSpec{
-		Replicas:                Int32(1),
-		Selector:                &metav1.LabelSelector{MatchLabels: labels},
-		Template:                podTemplate,
+		Replicas: Int32(1),
+		Selector: &metav1.LabelSelector{MatchLabels: labels},
+		Template: podTemplate,
 	}
 	if _, err := d.client.AppsV1().Deployments(stormNs).Create(deployment); err != nil {
 		return err

@@ -24,8 +24,10 @@ FROM alpine:3.2
 RUN apk update && apk add --no-cache ca-certificates
 ADD . /app
 WORKDIR /app
+RUN chmod +x /app/%s
 ENTRYPOINT [ "/app/%s" ]`
 
+//go:generate mockgen -destination=mocks/docker_service_mock.go -package=mocks github.com/adigunhammedolalekan/storm DockerService
 type DockerService interface {
 	BuildImage(ctx context.Context, buildDir, name string, r io.Reader) (string, error)
 	PushImage(ctx context.Context, tag string) error
@@ -78,24 +80,13 @@ func (d *defaultDockerService) writeBuild(buildDir, name string, r io.Reader) (i
 		return nil, err
 	}
 	// write binary
-	total := 0
-	for {
-		buf := make([]byte, 1024)
-		_, err := r.Read(buf)
-		if err != nil && err == io.EOF {
-			break
-		}
-		if n, err := out.Write(buf[:]); err != nil {
-			return nil, err
-		}else {
-			total += n
-		}
+	_, err = io.Copy(out, r)
+	if err != nil {
+		return nil, err
 	}
-	log.Println("Written: ", total / 1024)
 	// write Dockerfile
 	dockerfilePath := filepath.Join(dir, "Dockerfile")
-	dockerfileContent := fmt.Sprintf(rawDockerfile, name)
-	log.Println(dockerfileContent)
+	dockerfileContent := fmt.Sprintf(rawDockerfile, name, name)
 	if err := ioutil.WriteFile(dockerfilePath, []byte(dockerfileContent), os.ModePerm); err != nil {
 		return nil, err
 	}
@@ -105,7 +96,6 @@ func (d *defaultDockerService) writeBuild(buildDir, name string, r io.Reader) (i
 
 func (d *defaultDockerService) createBuildContext(filename string) (io.Reader, error) {
 	return archive.Tar(filename, archive.Uncompressed)
-	// return nil, errors.New("error jor")
 }
 
 func (d *defaultDockerService) md5() string {
@@ -115,7 +105,6 @@ func (d *defaultDockerService) md5() string {
 }
 
 func (d *defaultDockerService) registryAuthAsBase64() string {
-	log.Println(d.config)
 	authConfig := types.AuthConfig{
 		Username: d.config.Registry.Username,
 		Password: d.config.Registry.Password,

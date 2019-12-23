@@ -9,9 +9,10 @@ import (
 )
 
 const serverAuthKey = "X-Server-Code"
+
 type serviceHttpHandler struct {
 	docker DockerService
-	k8s K8sService
+	k8s    K8sService
 	cfg    *Config
 }
 
@@ -26,11 +27,12 @@ func (handler *serviceHttpHandler) deploymentHandler(w http.ResponseWriter, r *h
 		handler.badRequest(w, "bad request: app name is missing")
 		return
 	}
-	appBuildFolder := fmt.Sprintf("%s%s", appName, "Build")
+
 	if err != nil {
-		handler.badRequest(w, "bad request: bin is missing")
+		handler.badRequest(w, fmt.Sprintf("file is missing: Error %s", err.Error()))
 		return
 	}
+	appBuildFolder := fmt.Sprintf("%s%s", appName, "Build")
 	tag, err := handler.docker.BuildImage(context.Background(), appBuildFolder, appName, file)
 	if err != nil {
 		handler.respond(w, http.StatusInternalServerError, &Response{Error: true, Message: fmt.Sprintf("failed to build docker image: %s", err.Error())})
