@@ -42,13 +42,15 @@ func (handler *serviceHttpHandler) deploymentHandler(w http.ResponseWriter, r *h
 		handler.respond(w, http.StatusInternalServerError, &Response{Error: true, Message: "failed to push image to local registry"})
 		return
 	}
-	if err := handler.k8s.DeployService(tag, strings.ToLower(appName), map[string]string{}, true); err != nil {
+	result,  err := handler.k8s.DeployService(tag, strings.ToLower(appName), map[string]string{}, true);
+	if err != nil {
 		handler.respond(w, http.StatusInternalServerError, &Response{Error: true, Message: err.Error()})
 		return
 	}
 	handler.ok(w, &Response{Error: false, Message: "success", Data: struct {
 		PullUrl string `json:"pull_url"`
-	}{PullUrl: tag}})
+		AccessUrl string `json:"access_url"`
+	}{PullUrl: tag, AccessUrl: result.Address}})
 }
 
 func (handler *serviceHttpHandler) secureMW(next http.Handler) http.Handler {

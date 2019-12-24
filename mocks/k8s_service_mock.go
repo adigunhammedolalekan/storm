@@ -5,6 +5,7 @@
 package mocks
 
 import (
+	storm "github.com/adigunhammedolalekan/storm"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )
@@ -33,11 +34,12 @@ func (m *MockK8sService) EXPECT() *MockK8sServiceMockRecorder {
 }
 
 // DeployService mocks base method
-func (m *MockK8sService) DeployService(arg0, arg1 string, arg2 map[string]string, arg3 bool) error {
+func (m *MockK8sService) DeployService(arg0, arg1 string, arg2 map[string]string, arg3 bool) (*storm.DeploymentResult, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeployService", arg0, arg1, arg2, arg3)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(*storm.DeploymentResult)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // DeployService indicates an expected call of DeployService

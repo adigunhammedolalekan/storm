@@ -7,8 +7,12 @@ import (
 	appsV1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/kubernetes"
 	"log"
+	"math/rand"
+	"net"
+	"time"
 )
 
 const stormNs = "namespace-storm"
@@ -16,7 +20,11 @@ const registrySecretName = "storm-secret"
 
 //go:generate mockgen -destination=mocks/k8s_service_mock.go -package=mocks github.com/adigunhammedolalekan/storm K8sService
 type K8sService interface {
-	DeployService(tag, name string, envs map[string]string, isLocal bool) error
+	DeployService(tag, name string, envs map[string]string, isLocal bool) (*DeploymentResult, error)
+}
+
+type DeploymentResult struct {
+	Address string
 }
 
 type defaultK8sService struct {
@@ -49,24 +57,33 @@ func (d *defaultK8sService) createNameSpace() error {
 	return nil
 }
 
-func (d *defaultK8sService) DeployService(tag, name string, envs map[string]string, isLocal bool) error {
+func (d *defaultK8sService) DeployService(tag, name string, envs map[string]string, isLocal bool) (*DeploymentResult, error) {
 	var serviceType = v1.ServiceTypeNodePort
 	if !isLocal {
 		serviceType = v1.ServiceTypeLoadBalancer
 	}
 	svc, err := d.createService(name, serviceType)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	ports := svc.Spec.Ports
-	log.Println(ports)
 	deployment, err := d.client.AppsV1().Deployments(stormNs).Get(name, metav1.GetOptions{})
 	if err == nil && deployment.Name != "" {
 		if err := d.client.AppsV1().Deployments(stormNs).Delete(name, &metav1.DeleteOptions{}); err != nil {
-			return err
+			return nil, err
 		}
 	}
-	return d.createDeployment(tag, name, envs, svc.Labels, ports)
+	if err := d.createDeployment(tag, name, envs, svc.Labels, ports); err != nil {
+		return nil, err
+	}
+
+	addr := ""
+	for _, p := range ports {
+		if nodePort := p.NodePort; nodePort != 0 {
+			addr = fmt.Sprintf("http://localhost:%d", nodePort)
+		}
+	}
+	return &DeploymentResult{Address: addr}, nil
 }
 
 func (d *defaultK8sService) createNodePortService(name string) (*v1.Service, error) {
@@ -92,10 +109,12 @@ func (d *defaultK8sService) createService(serviceName string, serviceType v1.Ser
 	svc.Name = name
 	svc.Labels = labels
 	svc.Namespace = stormNs
+	servicePort := findAvailablePort()
 	port := v1.ServicePort{
 		Name:     fmt.Sprintf("%s-service-port", name),
 		Protocol: "TCP",
-		Port:     7600,
+		Port:     int32(servicePort),
+		TargetPort: intstr.FromInt(servicePort),
 	}
 	svc.Spec = v1.ServiceSpec{
 		Ports:    []v1.ServicePort{port},
@@ -119,11 +138,13 @@ func (d *defaultK8sService) createDeployment(tag, name string, envs, labels map[
 			Value: v,
 		})
 	}
-	port := int32(8090)
-	if len(ports) > 0 {
-		port = ports[0].Port
+	var port int32 = 0
+	for _, p := range ports {
+		if targetPort := p.TargetPort.IntVal; targetPort != 0 {
+			port = targetPort
+		}
 	}
-
+	envVars = append(envVars, v1.EnvVar{Name: "PORT", Value: fmt.Sprintf("%d", port)})
 	container.Name = name
 	container.Env = envVars
 	container.Image = tag
@@ -194,6 +215,17 @@ func (d *defaultK8sService) dockerConfigJson() ([]byte, error) {
 		d.config.Registry.Url: ad,
 	}}
 	return json.Marshal(a)
+}
+
+func findAvailablePort() int {
+	port := rand.Intn(59999)
+	addr := fmt.Sprintf("localhost:%d", port)
+	conn, err := net.DialTimeout("tcp", addr, 5 * time.Second)
+	if err != nil {
+		return port
+	}
+	conn.Close()
+	return findAvailablePort()
 }
 
 func Int32(i int32) *int32 {

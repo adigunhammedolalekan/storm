@@ -3,8 +3,10 @@ package main
 import (
 	"github.com/adigunhammedolalekan/storm"
 	"log"
+	"math/rand"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 func main() {
@@ -27,6 +29,7 @@ func main() {
 		}
 	}
 
+	rand.Seed(time.Now().UnixNano())
 	svr, err := storm.NewServer(configPath)
 	if err != nil {
 		log.Fatal(err)
