@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3e23fb63-2d24-4c05-abb7-130f925a06ee" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/client/config.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/storm_client.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/types.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/cmd.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/cmd.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/k8s_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/k8s_service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mocks/docker_service_mock.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mocks/k8s_service_mock.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/service_http_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/service_http_handler.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -41,15 +41,16 @@
     <property name="last_opened_file_path" value="$USER_HOME$" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/vendor/github.com" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/vendor/github.com" />
       <recent name="$PROJECT_DIR$/vendor/github.com/google" />
       <recent name="$PROJECT_DIR$/vendor/github.com/juju" />
       <recent name="$PROJECT_DIR$/vendor" />
       <recent name="$PROJECT_DIR$/files" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/client/cmd" />
+      <recent name="$PROJECT_DIR$/vendor/github.com" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -64,7 +65,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Test.TestDeploymentHandlerSuccess in github.com/adigunhammedolalekan/storm">
+  <component name="RunManager" selected="Go Build.go build github.com/adigunhammedolalekan/storm/client/cmd">
     <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="storm" />
       <working_directory value="$PROJECT_DIR$/" />
@@ -72,6 +73,15 @@
       <kind value="FILE" />
       <filePath value="$PROJECT_DIR$/" />
       <package value="github.com/adigunhammedolalekan/storm" />
+      <directory value="$PROJECT_DIR$/" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build github.com/adigunhammedolalekan/storm/client/cmd" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="storm" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <filePath value="$PROJECT_DIR$/client/cmd/cmd.go" />
+      <package value="github.com/adigunhammedolalekan/storm/client/cmd" />
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
@@ -132,6 +142,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Build.go build github.com/adigunhammedolalekan/storm/client/cmd" />
         <item itemvalue="Go Test.TestDeploymentHandlerSuccess in github.com/adigunhammedolalekan/storm" />
         <item itemvalue="Go Test.TestDeploymentHandlerMissingFile in github.com/adigunhammedolalekan/storm" />
         <item itemvalue="Go Test.TestDeploymentHandlerBadRequest in github.com/adigunhammedolalekan/storm" />

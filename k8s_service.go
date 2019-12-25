@@ -111,7 +111,7 @@ func (d *defaultK8sService) createService(serviceName string, serviceType v1.Ser
 	svc.Namespace = stormNs
 	servicePort := findAvailablePort()
 	port := v1.ServicePort{
-		Name:     fmt.Sprintf("%s-service-port", name),
+		Name:     truncString(fmt.Sprintf("%15s", name + "-service-port")),
 		Protocol: "TCP",
 		Port:     int32(servicePort),
 		TargetPort: intstr.FromInt(servicePort),
@@ -149,7 +149,7 @@ func (d *defaultK8sService) createDeployment(tag, name string, envs, labels map[
 	container.Env = envVars
 	container.Image = tag
 	container.Ports = []v1.ContainerPort{{
-		Name:          fmt.Sprintf("%s-port", name),
+		Name:          truncString(fmt.Sprintf("%15s", name + "-port")),
 		ContainerPort: port,
 		Protocol:      "TCP",
 	}}
@@ -230,4 +230,11 @@ func findAvailablePort() int {
 
 func Int32(i int32) *int32 {
 	return &i
+}
+
+func truncString(s string) string {
+	if len(s) < 15 {
+		return s
+	}
+	return s[0:14]
 }

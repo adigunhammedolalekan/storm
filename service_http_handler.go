@@ -9,7 +9,7 @@ import (
 )
 
 const serverAuthKey = "X-Server-Code"
-
+const maxMemory = 32 << 20
 type serviceHttpHandler struct {
 	docker DockerService
 	k8s    K8sService
@@ -21,6 +21,10 @@ func newServiceHttpHandler(docker DockerService, k8s K8sService, cfg *Config) *s
 }
 
 func (handler *serviceHttpHandler) deploymentHandler(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseMultipartForm(maxMemory); err != nil {
+		handler.respond(w, http.StatusInternalServerError, &Response{Error: true, Message: "failed to parse http form"})
+		return
+	}
 	file, _, err := r.FormFile("bin")
 	appName := r.FormValue("app_name")
 	if appName == "" {
