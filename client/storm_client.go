@@ -14,11 +14,11 @@ import (
 	"os/exec"
 	"time"
 )
-
+// StormClient
 type StormClient struct {
-	cmd *CmdClient
+	cmd        *CmdClient
 	httpClient *http.Client
-	config *Config
+	config     *Config
 }
 
 func NewStormClient(config *Config) (*StormClient, error) {
@@ -95,7 +95,7 @@ type CmdClient struct {
 }
 
 func NewCmdClient(appName string) *CmdClient {
-	return &CmdClient{appName:appName}
+	return &CmdClient{appName: appName}
 }
 
 func (c *CmdClient) ExecBuildCommand() error {
@@ -106,8 +106,7 @@ func (c *CmdClient) ExecBuildCommand() error {
 	if err := exec.Command("echo", "$GOOS").Run(); err != nil {
 		return err
 	}
-	// cmd := exec.Command("go", "build", "-o", c.appName)
-	cmd := exec.Command(`env GOOS=linux go build -ldflags="-s -w" -o ` + c.appName)
+	cmd := exec.Command("go", "build", "-o", c.appName)
 	wd, err := os.Getwd()
 	if err != nil {
 		return err
@@ -118,4 +117,3 @@ func (c *CmdClient) ExecBuildCommand() error {
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
 }
-

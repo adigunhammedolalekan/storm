@@ -9,7 +9,8 @@ import (
 )
 
 const serverAuthKey = "X-Server-Code"
-const maxMemory = 32 << 20
+const maxMemory = 32 << 100
+
 type serviceHttpHandler struct {
 	docker DockerService
 	k8s    K8sService
@@ -46,13 +47,13 @@ func (handler *serviceHttpHandler) deploymentHandler(w http.ResponseWriter, r *h
 		handler.respond(w, http.StatusInternalServerError, &Response{Error: true, Message: "failed to push image to local registry"})
 		return
 	}
-	result,  err := handler.k8s.DeployService(tag, strings.ToLower(appName), map[string]string{}, true);
+	result, err := handler.k8s.DeployService(tag, strings.ToLower(appName), map[string]string{}, true)
 	if err != nil {
 		handler.respond(w, http.StatusInternalServerError, &Response{Error: true, Message: err.Error()})
 		return
 	}
 	handler.ok(w, &Response{Error: false, Message: "success", Data: struct {
-		PullUrl string `json:"pull_url"`
+		PullUrl   string `json:"pull_url"`
 		AccessUrl string `json:"access_url"`
 	}{PullUrl: tag, AccessUrl: result.Address}})
 }

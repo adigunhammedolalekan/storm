@@ -29,7 +29,7 @@ func main() {
 	r := &client.DeploymentResult{}
 	if err := c.DeployApp(fmt.Sprintf("%s/%s", wd, cfg.AppName), r); err != nil {
 		log.Println("Deployment failed: ", err)
-	}else {
+	} else {
 		log.Println("App deployed: ", r.Data.AccessUrl)
 	}
 }

@@ -53,7 +53,6 @@ func (d *defaultK8sService) createNameSpace() error {
 			return err
 		}
 	}
-	log.Println("Namespace created")
 	return nil
 }
 
@@ -111,9 +110,9 @@ func (d *defaultK8sService) createService(serviceName string, serviceType v1.Ser
 	svc.Namespace = stormNs
 	servicePort := findAvailablePort()
 	port := v1.ServicePort{
-		Name:     truncString(fmt.Sprintf("%15s", name + "-service-port")),
-		Protocol: "TCP",
-		Port:     int32(servicePort),
+		Name:       truncString(fmt.Sprintf("%15s", name+"-service-port")),
+		Protocol:   "TCP",
+		Port:       int32(servicePort),
 		TargetPort: intstr.FromInt(servicePort),
 	}
 	svc.Spec = v1.ServiceSpec{
@@ -149,7 +148,7 @@ func (d *defaultK8sService) createDeployment(tag, name string, envs, labels map[
 	container.Env = envVars
 	container.Image = tag
 	container.Ports = []v1.ContainerPort{{
-		Name:          truncString(fmt.Sprintf("%15s", name + "-port")),
+		Name:          truncString(fmt.Sprintf("%15s", name+"-port")),
 		ContainerPort: port,
 		Protocol:      "TCP",
 	}}
@@ -221,10 +220,10 @@ func findAvailablePort() int {
 	port := rand.Intn(59999)
 	addr := fmt.Sprintf("localhost:%d", port)
 	conn, err := net.DialTimeout("tcp", addr, 5 * time.Second)
+	defer conn.Close()
 	if err != nil {
 		return port
 	}
-	conn.Close()
 	return findAvailablePort()
 }
 
