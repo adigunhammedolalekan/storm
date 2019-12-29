@@ -13,7 +13,7 @@ A tool to deploy Go apps in kubernetes cluster
 ...
 
 #### Client Installation
-`go install github.com/adigunhammedolalekan/storm/client/cmd storm`
+`go install github.com/adigunhammedolalekan/storm/client/cmd`
 
 ### Usage
 In your Go project directory; execute

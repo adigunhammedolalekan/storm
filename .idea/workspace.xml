@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3e23fb63-2d24-4c05-abb7-130f925a06ee" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/client/cmd/cmd.go" beforeDir="false" afterPath="$PROJECT_DIR$/client/cmd/cmd.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/client/config.go" afterDir="false" />
-    </list>
+    <list default="true" id="3e23fb63-2d24-4c05-abb7-130f925a06ee" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
