@@ -24,7 +24,7 @@ func NewServer(configPath string) (*Server, error) {
 	if err != nil {
 		return nil, err
 	}
-	dockerClient, err := client.NewEnvClient()
+	dockerClient, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
 		return nil, err
 	}
@@ -44,6 +44,7 @@ func NewServer(configPath string) (*Server, error) {
 	handler := newServiceHttpHandler(docker, k8sService, cfg)
 	router.Use(handler.secureMW)
 	router.HandleFunc("/deploy", handler.deploymentHandler)
+	router.HandleFunc("/logs/{app}", handler.logsHandler)
 	return &Server{router: router}, nil
 }
 

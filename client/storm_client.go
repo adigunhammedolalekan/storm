@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"net/url"
@@ -46,6 +47,11 @@ func (s *StormClient) DeployApp(binPath string, result *DeploymentResult) error 
 	writer := multipart.NewWriter(buf)
 	if err := writer.WriteField("app_name", s.config.AppName); err != nil {
 		return err
+	}
+	for _, env := range s.config.Environment {
+		if err := writer.WriteField(env.Key, env.Value); err != nil {
+			log.Println("failed to write env variable: ", err)
+		}
 	}
 	in, err := os.Open(binPath)
 	if err != nil {
@@ -99,11 +105,8 @@ func NewCmdClient(appName string) *CmdClient {
 }
 
 func (c *CmdClient) ExecBuildCommand() error {
-	export := exec.Command("env", "GOOS=linux")
-	if err := export.Run(); err != nil {
-		return err
-	}
-	if err := exec.Command("echo", "$GOOS").Run(); err != nil {
+	// change build env to linux, we need linux container
+	if err := os.Setenv("GOOS", "linux"); err != nil {
 		return err
 	}
 	cmd := exec.Command("go", "build", "-o", c.appName)

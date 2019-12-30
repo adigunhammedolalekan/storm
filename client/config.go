@@ -12,6 +12,10 @@ type Config struct {
 	ServerUrl      string `json:"server_url"`
 	ServerAuthCode string `json:"server_auth_code"`
 	AppName        string `json:"app_name"`
+	Environment []struct{
+		Key string `json:"key"`
+		Value string `json:"value"`
+	} `json:"environment"`
 }
 
 func Parse(r io.Reader) (*Config, error) {

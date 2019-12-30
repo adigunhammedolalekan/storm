@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	appsV1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -12,6 +13,7 @@ import (
 	"log"
 	"math/rand"
 	"net"
+	"strings"
 	"time"
 )
 
@@ -21,6 +23,7 @@ const registrySecretName = "storm-secret"
 //go:generate mockgen -destination=mocks/k8s_service_mock.go -package=mocks github.com/adigunhammedolalekan/storm K8sService
 type K8sService interface {
 	DeployService(tag, name string, envs map[string]string, isLocal bool) (*DeploymentResult, error)
+	GetLogs(appName string) (string, error)
 }
 
 type DeploymentResult struct {
@@ -103,7 +106,8 @@ func (d *defaultK8sService) createService(serviceName string, serviceType v1.Ser
 			return nil, err
 		}
 	}
-	labels := map[string]string{"web": fmt.Sprintf("%s-service", name)}
+
+	labels := d.createLabel(serviceName)
 	svc = &v1.Service{}
 	svc.Name = name
 	svc.Labels = labels
@@ -129,7 +133,7 @@ func (d *defaultK8sService) createDeployment(tag, name string, envs, labels map[
 	deployment.Labels = labels
 
 	container := v1.Container{}
-	envVars := make([]v1.EnvVar, len(envs))
+	envVars := make([]v1.EnvVar, 0, len(envs))
 
 	for k, v := range envs {
 		envVars = append(envVars, v1.EnvVar{
@@ -173,6 +177,10 @@ func (d *defaultK8sService) createDeployment(tag, name string, envs, labels map[
 	return nil
 }
 
+func (d *defaultK8sService) createLabel(name string) map[string]string {
+	return map[string]string{"web": fmt.Sprintf("%s-service", strings.ToLower(name))}
+}
+
 func (d *defaultK8sService) createRegistrySecret() error {
 	secret := &v1.Secret{}
 	secret.Name = registrySecretName
@@ -188,6 +196,38 @@ func (d *defaultK8sService) createRegistrySecret() error {
 		return err
 	}
 	return nil
+}
+
+func (d *defaultK8sService) GetLogs(appName string) (string, error) {
+	selector := fmt.Sprintf("web=%s-service", strings.ToLower(appName))
+	pods, err := d.getPodsBySelector(selector)
+	if err != nil {
+		return "", err
+	}
+	logs := ""
+	for _, p := range pods {
+		l := d.client.CoreV1().Pods(stormNs).GetLogs(p.Name, &v1.PodLogOptions{})
+		r, err := l.Stream()
+		if err != nil {
+			log.Println("failed to get stream handle for ", p.Name)
+			continue
+		}
+		data, err := ioutil.ReadAll(r)
+		if err != nil {
+			log.Println("failed to read stream data for ", p.Name)
+		}
+		logs += "\n"
+		logs += string(data)
+	}
+	return logs, nil
+}
+
+func (d *defaultK8sService) getPodsBySelector(selector string) ([]v1.Pod, error) {
+	pods, err := d.client.CoreV1().Pods(stormNs).List(metav1.ListOptions{LabelSelector: selector})
+	if err != nil {
+		return nil, err
+	}
+	return pods.Items, nil
 }
 
 // dockerConfigJson returns a json rep of user's
@@ -220,10 +260,10 @@ func findAvailablePort() int {
 	port := rand.Intn(59999)
 	addr := fmt.Sprintf("localhost:%d", port)
 	conn, err := net.DialTimeout("tcp", addr, 5 * time.Second)
-	defer conn.Close()
 	if err != nil {
 		return port
 	}
+	if err := conn.Close(); err != nil { /*no-op*/ }
 	return findAvailablePort()
 }
 

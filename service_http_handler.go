@@ -4,12 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"net/http"
 	"strings"
 )
 
 const serverAuthKey = "X-Server-Code"
-const maxMemory = 32 << 100
+const maxMemory = 32 << 20
 
 type serviceHttpHandler struct {
 	docker DockerService
@@ -32,7 +33,6 @@ func (handler *serviceHttpHandler) deploymentHandler(w http.ResponseWriter, r *h
 		handler.badRequest(w, "bad request: app name is missing")
 		return
 	}
-
 	if err != nil {
 		handler.badRequest(w, fmt.Sprintf("file is missing: Error %s", err.Error()))
 		return
@@ -47,7 +47,18 @@ func (handler *serviceHttpHandler) deploymentHandler(w http.ResponseWriter, r *h
 		handler.respond(w, http.StatusInternalServerError, &Response{Error: true, Message: "failed to push image to local registry"})
 		return
 	}
-	result, err := handler.k8s.DeployService(tag, strings.ToLower(appName), map[string]string{}, true)
+	// copy passed environment variables from form parameters
+	envs := make(map[string]string)
+	forms := r.PostForm
+	for k, v := range forms {
+		if k != "app_name" && k != "bin" {
+			if len(v) > 0 {
+				envs[k] = v[0]
+			}
+		}
+	}
+
+	result, err := handler.k8s.DeployService(tag, strings.ToLower(appName), envs, true)
 	if err != nil {
 		handler.respond(w, http.StatusInternalServerError, &Response{Error: true, Message: err.Error()})
 		return
@@ -56,6 +67,24 @@ func (handler *serviceHttpHandler) deploymentHandler(w http.ResponseWriter, r *h
 		PullUrl   string `json:"pull_url"`
 		AccessUrl string `json:"access_url"`
 	}{PullUrl: tag, AccessUrl: result.Address}})
+}
+
+func (handler *serviceHttpHandler) logsHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	appName := vars["app"]
+	if appName == "" {
+		handler.badRequest(w, "error: app_name is missing")
+		return
+	}
+	logs, err := handler.k8s.GetLogs(appName)
+	if err != nil {
+		handler.respond(w, http.StatusInternalServerError, &Response{Error: true, Message: err.Error()})
+		return
+	}
+	type logResponse struct {
+		Logs string
+	}
+	handler.ok(w, &Response{Error: false, Message: "success", Data: logResponse{Logs: logs}})
 }
 
 func (handler *serviceHttpHandler) secureMW(next http.Handler) http.Handler {
