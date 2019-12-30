@@ -82,7 +82,7 @@ func (handler *serviceHttpHandler) logsHandler(w http.ResponseWriter, r *http.Re
 		return
 	}
 	type logResponse struct {
-		Logs string
+		Logs string `json:"logs"`
 	}
 	handler.ok(w, &Response{Error: false, Message: "success", Data: logResponse{Logs: logs}})
 }

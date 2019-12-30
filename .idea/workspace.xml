@@ -2,12 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3e23fb63-2d24-4c05-abb7-130f925a06ee" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/types/types.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/client/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/cmd/cmd.go" beforeDir="false" afterPath="$PROJECT_DIR$/client/cmd/cmd.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/storm_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/client/storm_client.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/k8s_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/k8s_service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mocks/docker_service_mock.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mocks/k8s_service_mock.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/service_http_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/service_http_handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service_http_handler_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/service_http_handler_test.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -65,7 +68,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Build.go build github.com/adigunhammedolalekan/storm/client/cmd">
+  <component name="RunManager" selected="Go Test.go test github.com/adigunhammedolalekan/storm">
     <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="storm" />
       <working_directory value="$PROJECT_DIR$/" />
@@ -85,7 +88,7 @@
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
-    <configuration name="TestDeploymentHandlerBadRequest in github.com/adigunhammedolalekan/storm" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestDefaultK8sService_GetLogsInternalServerError in github.com/adigunhammedolalekan/storm" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="storm" />
       <working_directory value="$PROJECT_DIR$" />
       <framework value="gotest" />
@@ -93,10 +96,10 @@
       <package value="github.com/adigunhammedolalekan/storm" />
       <directory value="$PROJECT_DIR$/" />
       <filePath value="$PROJECT_DIR$/" />
-      <pattern value="^TestDeploymentHandlerBadRequest$" />
+      <pattern value="^TestDefaultK8sService_GetLogsInternalServerError$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestDeploymentHandlerMissingFile in github.com/adigunhammedolalekan/storm" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestGetLogs in github.com/adigunhammedolalekan/storm" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="storm" />
       <working_directory value="$PROJECT_DIR$" />
       <framework value="gotest" />
@@ -104,10 +107,10 @@
       <package value="github.com/adigunhammedolalekan/storm" />
       <directory value="$PROJECT_DIR$/" />
       <filePath value="$PROJECT_DIR$/" />
-      <pattern value="^TestDeploymentHandlerMissingFile$" />
+      <pattern value="^TestGetLogs$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestDeploymentHandlerSuccess in github.com/adigunhammedolalekan/storm" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestGetLogsBadRequest in github.com/adigunhammedolalekan/storm" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="storm" />
       <working_directory value="$PROJECT_DIR$" />
       <framework value="gotest" />
@@ -115,18 +118,7 @@
       <package value="github.com/adigunhammedolalekan/storm" />
       <directory value="$PROJECT_DIR$/" />
       <filePath value="$PROJECT_DIR$/" />
-      <pattern value="^TestDeploymentHandlerSuccess$" />
-      <method v="2" />
-    </configuration>
-    <configuration name="TestParseConfig in github.com/adigunhammedolalekan/storm" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="storm" />
-      <working_directory value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <kind value="PACKAGE" />
-      <package value="github.com/adigunhammedolalekan/storm" />
-      <directory value="$PROJECT_DIR$/" />
-      <filePath value="$PROJECT_DIR$/" />
-      <pattern value="^TestParseConfig$" />
+      <pattern value="^TestGetLogsBadRequest$" />
       <method v="2" />
     </configuration>
     <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
@@ -140,13 +132,23 @@
       <filePath value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
+    <configuration name="go test github.com/adigunhammedolalekan/storm" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="storm" />
+      <working_directory value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="github.com/adigunhammedolalekan/storm" />
+      <directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.go test github.com/adigunhammedolalekan/storm" />
+        <item itemvalue="Go Test.TestDefaultK8sService_GetLogsInternalServerError in github.com/adigunhammedolalekan/storm" />
+        <item itemvalue="Go Test.TestGetLogs in github.com/adigunhammedolalekan/storm" />
+        <item itemvalue="Go Test.TestGetLogsBadRequest in github.com/adigunhammedolalekan/storm" />
         <item itemvalue="Go Build.go build github.com/adigunhammedolalekan/storm/client/cmd" />
-        <item itemvalue="Go Test.TestDeploymentHandlerSuccess in github.com/adigunhammedolalekan/storm" />
-        <item itemvalue="Go Test.TestDeploymentHandlerMissingFile in github.com/adigunhammedolalekan/storm" />
-        <item itemvalue="Go Test.TestDeploymentHandlerBadRequest in github.com/adigunhammedolalekan/storm" />
-        <item itemvalue="Go Test.TestParseConfig in github.com/adigunhammedolalekan/storm" />
       </list>
     </recent_temporary>
   </component>

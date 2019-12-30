@@ -91,6 +91,37 @@ func (s *StormClient) DeployApp(binPath string, result *DeploymentResult) error 
 	return nil
 }
 
+func (s *StormClient) GetAppLogs() (string, error) {
+	u := fmt.Sprintf("%s/logs/%s", s.config.ServerUrl, s.config.AppName)
+	r, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return "", err
+	}
+	r.Header.Set("X-Server-Code", s.config.ServerAuthCode)
+	response, err := s.httpClient.Do(r)
+	if err != nil {
+		return "", err
+	}
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return "", err
+	}
+	var data struct{
+		Error bool `json:"error"`
+		Message string `json:"message"`
+		Data struct{
+			Logs string `json:"logs"`
+		}
+	}
+	if err := json.Unmarshal(body, &data); err != nil {
+		return "", err
+	}
+	if response.StatusCode != http.StatusOK || data.Error {
+		return "", errors.New(data.Message)
+	}
+	return data.Data.Logs, nil
+}
+
 func (s *StormClient) BuildBinary() error {
 	return s.cmd.ExecBuildCommand()
 }

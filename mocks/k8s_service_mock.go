@@ -5,7 +5,7 @@
 package mocks
 
 import (
-	storm "github.com/adigunhammedolalekan/storm"
+	types "github.com/adigunhammedolalekan/storm/types"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )
@@ -34,10 +34,10 @@ func (m *MockK8sService) EXPECT() *MockK8sServiceMockRecorder {
 }
 
 // DeployService mocks base method
-func (m *MockK8sService) DeployService(arg0, arg1 string, arg2 map[string]string, arg3 bool) (*storm.DeploymentResult, error) {
+func (m *MockK8sService) DeployService(arg0, arg1 string, arg2 map[string]string, arg3 bool) (*types.DeploymentResult, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeployService", arg0, arg1, arg2, arg3)
-	ret0, _ := ret[0].(*storm.DeploymentResult)
+	ret0, _ := ret[0].(*types.DeploymentResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -46,4 +46,19 @@ func (m *MockK8sService) DeployService(arg0, arg1 string, arg2 map[string]string
 func (mr *MockK8sServiceMockRecorder) DeployService(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeployService", reflect.TypeOf((*MockK8sService)(nil).DeployService), arg0, arg1, arg2, arg3)
+}
+
+// GetLogs mocks base method
+func (m *MockK8sService) GetLogs(arg0 string) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetLogs", arg0)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetLogs indicates an expected call of GetLogs
+func (mr *MockK8sServiceMockRecorder) GetLogs(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLogs", reflect.TypeOf((*MockK8sService)(nil).GetLogs), arg0)
 }

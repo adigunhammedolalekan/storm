@@ -12,14 +12,31 @@ import (
 )
 
 func main() {
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	path := filepath.Join(wd, "storm_config.json")
+	in, err := os.Open(path)
+	if err != nil {
+		log.Fatal("failed to open configuration: ", err)
+	}
+	cfg, err := client.Parse(in)
+	if err != nil {
+		log.Fatal("failed to read configuration: ", err)
+	}
+
+	binPath := fmt.Sprintf("%s/%s", wd, cfg.AppName)
 	args := os.Args
 	if len(args) > 1 {
 		arg := args[1]
 		switch arg {
 		case "init":
 			initProjectConfig()
+		case "logs":
+			getLogs(cfg)
 		default:
-			runClient()
+			runClient(binPath, cfg)
 		}
 	}
 }
@@ -76,21 +93,7 @@ func initProjectConfig() {
 	os.Exit(0)
 }
 
-func runClient() {
-	wd, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
-	path := filepath.Join(wd, "storm_config.json")
-	in, err := os.Open(path)
-	if err != nil {
-		log.Fatal("failed to open configuration: ", err)
-	}
-	cfg, err := client.Parse(in)
-	if err != nil {
-		log.Fatal("failed to read configuration: ", err)
-	}
-
+func runClient(binPath string, cfg *client.Config) {
 	c, err := client.NewStormClient(cfg)
 	if err != nil {
 		log.Fatal(err)
@@ -101,9 +104,24 @@ func runClient() {
 	}
 	log.Println("Starting Deployment...")
 	r := &client.DeploymentResult{}
-	if err := c.DeployApp(fmt.Sprintf("%s/%s", wd, cfg.AppName), r); err != nil {
+	if err := c.DeployApp(binPath, r); err != nil {
 		log.Println("Deployment failed: ", err)
 	} else {
 		log.Println("App deployed: ", r.Data.AccessUrl)
 	}
+}
+
+func getLogs(cfg *client.Config) {
+	c, err := client.NewStormClient(cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+	logs, err := c.GetAppLogs()
+	if err != nil {
+		log.Println(err)
+	}else {
+		log.Println()
+		log.Println(logs)
+	}
+	os.Exit(0)
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/adigunhammedolalekan/storm/types"
 	"io/ioutil"
 	appsV1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
@@ -22,12 +23,8 @@ const registrySecretName = "storm-secret"
 
 //go:generate mockgen -destination=mocks/k8s_service_mock.go -package=mocks github.com/adigunhammedolalekan/storm K8sService
 type K8sService interface {
-	DeployService(tag, name string, envs map[string]string, isLocal bool) (*DeploymentResult, error)
+	DeployService(tag, name string, envs map[string]string, isLocal bool) (*types.DeploymentResult, error)
 	GetLogs(appName string) (string, error)
-}
-
-type DeploymentResult struct {
-	Address string
 }
 
 type defaultK8sService struct {
@@ -59,7 +56,7 @@ func (d *defaultK8sService) createNameSpace() error {
 	return nil
 }
 
-func (d *defaultK8sService) DeployService(tag, name string, envs map[string]string, isLocal bool) (*DeploymentResult, error) {
+func (d *defaultK8sService) DeployService(tag, name string, envs map[string]string, isLocal bool) (*types.DeploymentResult, error) {
 	var serviceType = v1.ServiceTypeNodePort
 	if !isLocal {
 		serviceType = v1.ServiceTypeLoadBalancer
@@ -85,7 +82,7 @@ func (d *defaultK8sService) DeployService(tag, name string, envs map[string]stri
 			addr = fmt.Sprintf("http://localhost:%d", nodePort)
 		}
 	}
-	return &DeploymentResult{Address: addr}, nil
+	return &types.DeploymentResult{Address: addr}, nil
 }
 
 func (d *defaultK8sService) createNodePortService(name string) (*v1.Service, error) {
@@ -215,8 +212,8 @@ func (d *defaultK8sService) GetLogs(appName string) (string, error) {
 		data, err := ioutil.ReadAll(r)
 		if err != nil {
 			log.Println("failed to read stream data for ", p.Name)
+			continue
 		}
-		logs += "\n"
 		logs += string(data)
 	}
 	return logs, nil
