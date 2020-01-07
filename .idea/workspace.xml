@@ -2,15 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3e23fb63-2d24-4c05-abb7-130f925a06ee" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/types/types.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/cmd/cmd.go" beforeDir="false" afterPath="$PROJECT_DIR$/client/cmd/cmd.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/storm_client.go" beforeDir="false" afterPath="$PROJECT_DIR$/client/storm_client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/cmd/storm_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/cmd/storm_config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/k8s_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/k8s_service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mocks/docker_service_mock.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mocks/k8s_service_mock.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/service_http_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/service_http_handler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service_http_handler_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/service_http_handler_test.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

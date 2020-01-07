@@ -1,5 +1,6 @@
 {
-	"server_url": "http://localhost:9870",
-	"server_auth_code": "NmRiOWI2MDctZGU4NS00ZmQyLThiZTItMGE3MjRmMjkwMjVj",
-	"app_name": "euler"
+	"server_url": "http",
+	"server_auth_code": "code",
+	"app_name": "PaskyProject",
+	"environment": null
 }

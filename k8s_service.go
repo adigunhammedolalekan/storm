@@ -34,9 +34,6 @@ type defaultK8sService struct {
 
 func newDefaultK8sService(client *kubernetes.Clientset, config *Config) K8sService {
 	d := &defaultK8sService{client: client, config: config}
-	if err := d.createRegistrySecret(); err != nil {
-		log.Println(err)
-	}
 	if err := d.createNameSpace(); err != nil {
 		log.Println("Error occurred while creating namespace: ", err)
 	}
@@ -189,7 +186,13 @@ func (d *defaultK8sService) createRegistrySecret() error {
 	secret.Data = map[string][]byte{
 		v1.DockerConfigJsonKey: data,
 	}
-	if _, err := d.client.CoreV1().Secrets(stormNs).Create(secret); err != nil {
+	c := d.client.CoreV1().Secrets(stormNs)
+	if s, err := c.Get(registrySecretName, metav1.GetOptions{}); err == nil && s.Name != "" {
+		if err := c.Delete(registrySecretName, nil); err != nil {
+			return err
+		}
+	}
+	if _, err := c.Create(secret); err != nil {
 		return err
 	}
 	return nil
@@ -272,5 +275,5 @@ func truncString(s string) string {
 	if len(s) < 15 {
 		return s
 	}
-	return s[0:14]
+	return strings.TrimSpace(s[0:14])
 }
